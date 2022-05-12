@@ -9,9 +9,31 @@ print_rules(){
     echo "All Table Rules:"
     sudo iptables -L -v -n | more
 }
+#this is the start of the menus for add to chains
+Add_Forwarding(){
+    echo "What rules would you like to add to the forwarding chain?"
+    options=("Allow Internal Network to Access External" "Go Back")
+    select opt in "${options[@]}"
+    do 
+        case $opt in
+            "Allow Internal Network to Access External" "Go Back")
+                echo "You chose to allow internal network to access external"
+                sudo iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+                main 
+                continue
+                ;;
+            "Go Back")
+                echo "You chose to go back"
+                add_Rule_Menu
+                continue
+                ;;
+            *) echo "invalid option $REPLY"
+        esac
+    done
+}
 Add_Output(){
     echo "What rules would you like to append to output?"
-    options=("Allow Established Outgoing Connections" "Blocking Outgoing SMTP Mail")
+    options=("Allow Established Outgoing Connections" "Blocking Outgoing SMTP Mail" "Go Back")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -27,7 +49,12 @@ Add_Output(){
                 main
                 continue
                 ;;
-            *)echo "invalid option $REPLY"
+            "Go Back")
+                echo "You chose to go back."
+                add_Rule_Menu
+                continue
+                ;;
+            *) echo "invalid option $REPLY"
         esac
     done
 }
@@ -96,6 +123,8 @@ Add_Input(){
         esac
     done
 }
+#END of the final adding Rules Menus
+#Below is the menu to choose which chain is to be added to
 add_Rule_Menu(){
     echo "What chain would you like to add a rule to?"
     options=("INPUT" "OUTPUT" "FORWARDING" "Compound" "Go Back") 
@@ -104,12 +133,12 @@ add_Rule_Menu(){
         case $opt in
             "INPUT")
                 echo "Adding a Rule to INPUT"
-                
+                Add_Input
                 continue
                 ;;
             "OUTPUT")
                 echo "Adding a Rule to OUTPUT"
-
+                Add_Output
                 continue
                 ;;
             "FORWARDING")
@@ -119,6 +148,10 @@ add_Rule_Menu(){
                 ;;
             "Compound")
                 echo "You selected the ouption that adds both input and output rules"
+                Add_Compound
+                continue
+                ;;
+
             "Go Back")
                 change_menu
                 ;;
@@ -126,6 +159,8 @@ add_Rule_Menu(){
         esac
     done
 }
+#END of chain choosing for ADD RULE Menu
+#Below is the menu to choose the chain to delete from
 delete_Rule_Menu(){
     echo "What chain would you like to delete a rule from?"
     options=("INPUT" "OUTPUT" "FORWARDING" "Go Back")
@@ -153,8 +188,8 @@ delete_Rule_Menu(){
             *) echo "invalid option $REPLY";;
         esac
     done
-
 }
+#END of the menu to choose the chain to delete rules from
 modify_Rule_Menu(){
     echo "What chain would you like to add a rule to?"
     options=("INPUT" "OUTPUT" "FORWARDING" "Go Back")
@@ -183,6 +218,7 @@ modify_Rule_Menu(){
         esac
     done
 }
+#Below is the menu where you choose whether you would like to add change or modify the rules
 change_menu(){
     echo "Choose whether you would like to add or delete a rule:"
     options=("Add Rule" "Delete Rule" "Modify Rule" "Go Back")
