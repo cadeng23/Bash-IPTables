@@ -160,6 +160,97 @@ add_Rule_Menu(){
     done
 }
 #END of chain choosing for ADD RULE Menu
+delete_INPUT(){
+    echo "You chose to delete rules in the INPUT chain"
+    options=("Delete and Reset all rules regarding INPUT?" "Go Back")
+    select opt in "${options[@]}"
+    do 
+        case $opt in
+            "Delete and Reset all rules regarding INPUT?")
+                echo "Are you sure you would like to reset all rules in INPUT chain? (y/n)"
+                read choice
+                if [$choice == 'y']
+                then 
+                    sudo iptables -P INPUT ACCEPT
+                    sudo iptables -F INPUT
+                    echo "The rules regarding INPUT chain are now reset"
+                    main
+                else
+                    echo "You have chosen to not reset the INPUT chain"
+                    delete_INPUT
+                fi
+                continue
+                ;;
+            "Go Back")
+                echo "You chose to go back"
+                delete_Rule_Menu
+                continue
+                ;;
+            *) echo "invalid option $REPLY"
+        esac
+    done                
+}
+delete_OUTPUT(){
+    echo "You chose to delete rules in the OUTPUT chain"
+    options=("Delete and Reset all rules regarding OUTPUT?" "Go Back")
+    select opt in "${options[@]}"
+    do 
+        case $opt in
+            "Delete and Reset all rules regarding OUTPUT?")
+                echo "Are you sure you would like to reset all rules in OUTPUT chain? (y/n)"
+                read choice
+                if [$choice == 'y']
+                then 
+                    sudo iptables -P OUTPUT ACCEPT
+                    sudo iptables -F OUTPUT
+                    echo "The rules regarding OUTPUT chain are now reset"
+                    main
+                else
+                    echo "You have chosen to not reset the OUTPUT chain"
+                    delete_OUTPUT
+                fi
+                continue
+                ;;
+            "Go Back")
+                echo "You chose to go back"
+                delete_Rule_Menu
+                continue
+                ;;
+            *) echo "invalid option $REPLY"
+        esac
+    done      
+}
+delete_FORWARD(){
+    echo "You chose to delete rules in the FORWARD chain"
+    options=("Delete and Reset all rules regarding FORWARD?" "Go Back")
+    select opt in "${options[@]}"
+    do 
+        case $opt in
+            "Delete and Reset all rules regarding FORWARD?")
+                echo "Are you sure you would like to reset all rules in FORWARD chain? (y/n)"
+                read choice
+                if [$choice == 'y']
+                then 
+                    sudo iptables -P FORWARD ACCEPT
+                    sudo iptables -F FORWARD
+                    echo "The rules regarding FORWARD chain are now reset"
+                    main
+                else
+                    echo "You have chosen to not reset the FORWARD chain"
+                    delete_FORWARD
+                fi
+                continue
+                ;;
+            "Go Back")
+                echo "You chose to go back"
+                delete_Rule_Menu
+                continue
+                ;;
+            *) echo "invalid option $REPLY"
+        esac
+    done      
+}
+
 #Below is the menu to choose the chain to delete from
 delete_Rule_Menu(){
     echo "What chain would you like to delete a rule from?"
@@ -169,17 +260,17 @@ delete_Rule_Menu(){
         case $opt in
             "INPUT")
                 echo "Deleting a Rule from INPUT"
-
+                delete_INPUT
                 continue
                 ;;
             "OUTPUT")
                 echo "Deleting a Rule from OUTPUT"
-
+                delete_OUTPUT
                 continue
                 ;;
             "FORWARDING")
-                echo "Deleting a Rule from FORWARDING"
-                
+                echo "Deleting a Rule from FORWARD"
+                delete_FORWARD
                 continue
                 ;;
             "Go Back")
