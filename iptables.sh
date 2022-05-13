@@ -281,6 +281,13 @@ delete_Rule_Menu(){
     done
 }
 #END of the menu to choose the chain to delete rules from
+#BEGIN MODIFY rules
+modify_INPUT(){
+    echo "ipV4 Rules:"
+    sudo iptables -S
+    read change
+    echo "What would you like to change the INPUT chain to? "
+}
 modify_Rule_Menu(){
     echo "What chain would you like to add a rule to?"
     options=("INPUT" "OUTPUT" "FORWARDING" "Go Back")
